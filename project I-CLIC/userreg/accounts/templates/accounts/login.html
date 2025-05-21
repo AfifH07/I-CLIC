@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Intelligent Clinic Care</title>
+    <style>
+        body {
+            background-color: rgb(0, 136, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: blue;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: gray;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="email"],
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: darkblue;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            color: gray;
+        }
+        .footer a {
+            color: blueviolet;
+            text-decoration: none;
+        }
+        .welcome {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Login</h1>
+        <div class="subtitle">Intelligent Clinic Care</div>
+        <div class="welcome">Welcome Back</div>
+        <p class="subtitle">Enter your email and password to login</p>
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            {{ form.username.label_tag }}
+            {{ form.username }}
+
+            {{ form.password.label_tag }}
+            {{ form.password }}
+
+            <button type="submit" class="btn">Sign In</button>
+        </form>
+
+        <div class="footer">
+            Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
+        </div>
+        <div class="footer">
+            © 2025 Intelligent Clinic Care. All rights reserved.
+        </div>
+    </div>
+
+</body>
+</html>

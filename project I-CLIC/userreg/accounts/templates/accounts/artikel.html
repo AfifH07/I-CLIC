@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I-CLIC Health Assistant</title>
+  <style>
+    :root {
+      --primary-color: #22a7e5;
+      --accent-color: #ff6b9d;
+      --dark-blue: #0c3559;
+      --light-blue: #e6f7ff;
+      --text-color: #333;
+      --light-text: #fff;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .header {
+      background: linear-gradient(90deg, var(--primary-color) 0%, #1c92d2 100%);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: margin-left 0.3s ease;
+    }
+
+    .header.shift {
+      margin-left: 280px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-icon {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-link {
+      color: var(--light-text);
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      transition: background 0.3s;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .toggle-btn {
+      font-size: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+      margin-right: 15px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 280px;
+      position: fixed;
+      left: -280px;
+      top: 0;
+      background: var(--dark-blue);
+      padding-top: 70px;
+      transition: 0.3s ease;
+      box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+    }
+
+    .sidebar .menu-item {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar .menu-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .menu-item i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    /* Sidebar header and close button styles */
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      margin-top: -50px;
+      margin-bottom: 20px;
+    }
+
+    .sidebar-title {
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close-btn:hover {
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 95px auto 30px;
+      /* Increased top margin to push content down */
+      padding: 20px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .container.shift {
+      margin-left: 300px;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--dark-blue);
+      font-size: 32px;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+
+    .prediction-box {
+      background: white;
+      text-align: center;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 40px;
+      font-size: 18px;
+      border-top: 4px solid var(--accent-color);
+    }
+
+    .prediction-box strong {
+      color: var(--accent-color);
+      font-size: 22px;
+    }
+
+    .articles-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .article-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .article-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .article-image {
+      height: 160px;
+      background: var(--light-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+      font-size: 40px;
+    }
+
+    .article-content {
+      padding: 20px;
+    }
+
+    .article-title {
+      color: var(--dark-blue);
+      font-size: 18px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .article-desc {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      height: 68px;
+      overflow: hidden;
+    }
+
+    .read-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .read-btn:hover {
+      background: var(--accent-color);
+      transform: scale(1.03);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    @media (max-width: 992px) {
+      .container.shift {
+        margin-left: 20px;
+      }
+
+      .header.shift {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-right .nav-link {
+        display: none;
+      }
+
+      .articles-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .articles-container {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+  <div class="header" id="header">
+    <div class="header-left">
+      <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="logo-container">
+        <span class="logo-icon"><i class="fas fa-comment-medical"></i></span>
+        <span class="logo-text">I-CLIC</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="{% url 'tampilandepan' %}" class="nav-link">Beranda</a>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">I-CLIC</div>
+      <button class="close-btn" onclick="toggleSidebar()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-menu">
+      <a href="{% url 'tampilandepan' %}" id="beranda-link" class="menu-item">
+        <i class="fas fa-home"></i> Beranda
+      </a>
+      <a href="{% url 'riwayat' %}" id="riwayat-link" class="menu-item">
+        <i class="fas fa-history"></i> Riwayat
+      </a>
+      <a href="{% url 'artikel' %}" id="artikel-link" class="menu-item">
+        <i class="fas fa-newspaper"></i> Artikel
+      </a>
+      <a href="{% url 'templatechatbot' %}" class="menu-item" id="chat-link">
+        <i class="fas fa-comments"></i> Chat Konsultasi
+      </a>
+    </div>
+  </div>
+
+  <div class="container" id="content">
+    <h1>Artikel Kesehatan Pernafasan</h1>
+
+    <div class="prediction-box">
+      <i class="fas fa-lungs fa-2x" style="color: var(--primary-color); margin-bottom: 15px;"></i>
+      <p>Berdasarkan hasil prediksi, kemungkinan penyakit Anda adalah: <strong>Bronchitis</strong></p>
+    </div>
+
+    <div class="articles-container" id="articles"></div>
+
+    <div class="footer">
+      <p>&copy; 2025 I-CLIC Health Assistant. Semua hak cipta dilindungi.</p>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      const header = document.getElementById('header');
+
+      sidebar.classList.toggle('active');
+      content.classList.toggle('shift');
+      header.classList.toggle('shift');
+    }
+
+
+    const articleData = [
+      {
+        title: "Cara Mengendalikan Asma Secara Alami",
+        desc: "Panduan lengkap tentang metode alami untuk mengendalikan gejala asma dan meningkatkan kualitas hidup.",
+        icon: "fas fa-leaf",
+        link: "https://www.halodoc.com/artikel/mengenal-pilihan-obat-herbal-asma-yang-mudah-didapatkan"
+      },
+      {
+        title: "Perbedaan Asma dan Bronkitis Kronis",
+        desc: "Memahami perbedaan mendasar antara kedua penyakit pernafasan yang sering tertukar.",
+        icon: "fas fa-lungs-virus",
+        link: "https://www.halodoc.com/artikel/ini-bedanya-bronkitis-dan-pneumonia-yang-perlu-diketahui-orangtua"
+      },
+      {
+        title: "Terapi Oksigen untuk Gangguan Pernafasan",
+        desc: "Manfaat terapi oksigen bagi penderita gangguan pernafasan dan cara penggunaannya yang tepat.",
+        icon: "fas fa-wind",
+        link: "https://www.halodoc.com/artikel/kenali-terapi-oksigen-untuk-pengidap-penyakit-paru-obstruktif-kronis"
+      },
+      {
+        title: "Pentingnya Inhaler untuk Penderita Asma",
+        desc: "Mengapa inhaler menjadi alat vital untuk penderita asma dan cara menggunakannya dengan benar.",
+        icon: "fas fa-spray-can",
+        link: "https://www.halodoc.com/artikel/cara-menggunakan-inhaler-asma-dengan-tepat"
+      },
+      {
+        title: "Latihan Pernafasan untuk Kesehatan Paru",
+        desc: "Teknik pernafasan yang terbukti dapat meningkatkan kapasitas dan kesehatan paru-paru Anda.",
+        icon: "fas fa-lungs",
+        link: "https://www.halodoc.com/artikel/ini-4-latihan-pernapasan-untuk-meningkatkan-fungsi-paru-paru"
+      },
+      {
+        title: "Pencegahan Asma pada Anak",
+        desc: "Langkah-langkah pencegahan asma pada anak-anak dan cara mengenali gejala sejak dini.",
+        icon: "fas fa-child",
+        link: "https://www.halodoc.com/artikel/6-cara-mendeteksi-dini-asma-pada-anak"
+      },
+      {
+        title: "Manfaat Jahe untuk Kesehatan Pernafasan",
+        desc: "Studi ilmiah tentang khasiat jahe untuk meredakan gejala gangguan pernafasan.",
+        icon: "fas fa-seedling",
+        link: "https://www.halodoc.com/artikel/10-khasiat-jahe-beserta-bukti-ilmiahnya"
+      },
+      {
+        title: "Diet Sehat untuk Penderita Asma",
+        desc: "Makanan yang dianjurkan dan harus dihindari bagi penderita asma untuk mencegah serangan.",
+        icon: "fas fa-apple-alt",
+        link: "https://halosehat.com/penyakit/asma/makanan-yang-dilarang-pengidap-asma"
+      }
+    ];
+
+    function loadArticles() {
+      const container = document.getElementById('articles');
+
+      articleData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'article-card';
+        card.innerHTML = `
+        <div class="article-image">
+          <i class="${item.icon}"></i>
+        </div>
+        <div class="article-content">
+          <h3 class="article-title">${item.title}</h3>
+          <p class="article-desc">${item.desc}</p>
+          <a href="${item.link}" class="read-btn">Baca Selengkapnya</a>
+        </div>
+      `;
+        container.appendChild(card);
+      });
+    }
+
+    window.onload = loadArticles;
+  </script>
+
+</body>
+
+</html>

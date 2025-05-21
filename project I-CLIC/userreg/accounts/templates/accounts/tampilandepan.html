@@ -1,0 +1,645 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>I-CLIC | Asisten Kesehatan AI</title>
+  <!-- Font import -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Animate on scroll library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <style>
+    :root {
+      --primary: #0ea5e9; /* Biru lebih cerah */
+      --primary-dark: #0284c7;
+      --secondary: #38bdf8; /* Biru lebih muda */
+      --accent: #f472b6;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark);
+      overflow-x: hidden;
+      background-color: var(--light);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header Styles */
+    header {
+      padding: 16px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      background: linear-gradient(to right, #0ea5e9, #38bdf8);
+    }
+
+    header.scrolled {
+      box-shadow: var(--shadow-md);
+      padding: 12px 0;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      margin-right: 8px;
+      font-size: 28px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:not(.btn)::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--white);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:not(.btn):hover::after {
+      width: 100%;
+    }
+
+    .nav-links a:not(.btn):hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .btn-login {
+      color: var(--white);
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 2px solid var(--white);
+    }
+
+    .btn-login:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-register {
+      background: linear-gradient(135deg, var(--accent) 0%, #f87171 100%);
+      color: white;
+      border: none;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-register:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+
+    .video-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.6));
+      z-index: -1;
+    }
+
+    .hero-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .hero-text {
+      flex: 1;
+      max-width: 600px;
+      color: var(--white);
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #ffffff, #e2e8f0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-title span {
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-image {
+      flex: 1;
+      max-width: 500px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .chat-mockup {
+      width: 100%;
+      background-color: var(--white);
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transform: perspective(1000px) rotateY(-10deg);
+      transition: all 0.5s ease;
+    }
+
+    .chat-mockup:hover {
+      transform: perspective(1000px) rotateY(0deg);
+    }
+
+    .chat-header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      padding: 16px;
+      color: white;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-body {
+      padding: 16px;
+      min-height: 320px;
+    }
+
+    .chat-message {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .user-message {
+      justify-content: flex-end;
+    }
+
+    .bot-avatar {
+      width: 36px;
+      height: 36px;
+      background-color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .message-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+    }
+
+    .bot-bubble {
+      background-color: var(--gray-100);
+      border-bottom-left-radius: 4px;
+    }
+
+    .user-bubble {
+      background-color: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--gray-200);
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) {
+      animation-delay: 0s;
+    }
+    
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .chat-input {
+      border-top: 1px solid var(--gray-200);
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-field {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+
+    .send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, #f87171 100%);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .btn-start {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent) 0%, #f87171 100%);
+      color: white;
+      font-size: 18px;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+      text-decoration: none;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-start i {
+      margin-left: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-start:hover i {
+      transform: translateX(4px);
+    }
+
+    /* Pulse animation for button */
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(244, 114, 182, 0.6);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(244, 114, 182, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(244, 114, 182, 0);
+      }
+    }
+
+    /* Floating elements animation */
+    .floating {
+      position: absolute;
+      z-index: -1;
+      border-radius: 50%;
+      opacity: 0.6;
+      filter: blur(60px);
+    }
+
+    .float-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--accent);
+      top: -150px;
+      right: -100px;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .float-2 {
+      width: 400px;
+      height: 400px;
+      background: var(--primary);
+      bottom: -200px;
+      left: -200px;
+      animation: float 12s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(30px, -30px);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-title {
+        font-size: 2.8rem;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero-text {
+        max-width: 100%;
+      }
+
+      .hero-image {
+        max-width: 90%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .mobile-menu {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background-color: var(--white);
+        padding: 20px;
+        box-shadow: var(--shadow-md);
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .mobile-menu.active {
+        display: flex;
+      }
+
+      .hero-title {
+        font-size: 2.2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <div class="container header-container">
+      <a href="#" class="logo">
+        <span class="logo-icon">💬</span>
+        I-CLIC
+      </a>
+      <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+      <nav class="nav-links">
+        <a href="{% url 'tampilandepan' %}">Beranda</a>
+        <a href="{% url 'login' %}" class="btn btn-login">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="mobile-menu">
+    <a href="{% url 'tampilandepan' %}">Beranda</a>
+    <a href="{% url 'login' %}" class="btn btn-login">Login</a>
+    <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <!-- Video Background -->
+    <video class="video-background" autoplay muted loop>
+      <source src="{% static 'vidiokesehatan/videoplayback.mp4' %}" type="video/mp4">
+      Browser tidak mendukung video.
+    </video>
+
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Floating elements -->
+    <div class="floating float-1"></div>
+    <div class="floating float-2"></div>
+
+    <div class="container hero-content">
+      <div class="hero-text" data-aos="fade-up" data-aos-duration="1000">
+        <h1 class="hero-title">Informasi Kesehatan <span>Terpercaya</span> di Ujung Jari Anda</h1>
+        <p class="hero-subtitle">I-CLIC adalah asisten kesehatan berbasis AI yang memberikan informasi medis akurat dan terpercaya kapanpun Anda membutuhkannya.</p>
+        <a href="{% url 'templatechatbot' %}" class="btn-start pulse">
+          Mulai Chat <i>→</i>
+        </a>
+      </div>
+      
+      <div class="hero-image" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
+        <div class="chat-mockup">
+          <div class="chat-header">
+            <div class="bot-avatar">IC</div>
+            <div style="margin-left: 8px;">I-CLIC Health Assistant</div>
+          </div>
+          <div class="chat-body">
+            <div class="chat-message">
+              <div class="bot-avatar">IC</div>
+              <div class="message-bubble bot-bubble">
+                Halo! Saya I-CLIC, asisten kesehatan AI Anda. Ada yang bisa saya bantu hari ini?
+              </div>
+            </div>
+            
+            <div class="chat-message user-message">
+              <div class="message-bubble user-bubble">
+                Bagaimana cara mencegah dehidrasi saat olahraga?
+              </div>
+              <div class="user-avatar">U</div>
+            </div>
+            
+            <div class="chat-message">
+              <div class="bot-avatar">IC</div>
+              <div class="message-bubble bot-bubble">
+                Untuk mencegah dehidrasi saat olahraga, Anda perlu:
+                <br><br>
+                1. Minum air sebelum, selama, dan setelah berolahraga
+                <br>
+                2. Konsumsi minuman elektrolit jika berolahraga >60 menit
+                <br>
+                3. Hindari kafein dan alkohol
+              </div>
+            </div>
+            
+            <div class="chat-message">
+              <div class="bot-avatar">IC</div>
+              <div class="message-bubble bot-bubble">
+                <div class="typing-indicator">
+                  <div class="typing-dot"></div>
+                  <div class="typing-dot"></div>
+                  <div class="typing-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input">
+            <input type="text" class="input-field" placeholder="Ketik pertanyaan Anda...">
+            <button class="send-btn">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Initialize AOS library
+    document.addEventListener('DOMContentLoaded', function() {
+      AOS.init();
+      
+      // Header scroll effect
+      const header = document.getElementById('header');
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+      
+      // Mobile menu toggle
+      const menuBtn = document.querySelector('.mobile-menu-btn');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      
+      menuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>
