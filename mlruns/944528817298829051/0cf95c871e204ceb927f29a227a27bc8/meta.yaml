@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/944528817298829051/0cf95c871e204ceb927f29a227a27bc8/artifacts
+end_time: 1748686858244
+entry_point_name: ''
+experiment_id: '944528817298829051'
+lifecycle_stage: active
+run_id: 0cf95c871e204ceb927f29a227a27bc8
+run_name: RandomForest_Balanced_training
+run_uuid: 0cf95c871e204ceb927f29a227a27bc8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1748686852746
+status: 3
+tags: []
+user_id: Dimas Firmansyah
