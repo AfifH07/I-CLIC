@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I-CLIC - Riwayat Prediksi Pasien</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #22a7e5;
+            --accent-color: #ff6b9d;
+            --dark-blue: #0c3559;
+            --light-blue: #e6f7ff;
+            --text-color: #333;
+            --light-text: #fff;
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(90deg, var(--primary-color) 0%, #1c92d2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: margin-left 0.3s ease;
+        }
+
+        .header.shift {
+            margin-left: 280px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: var(--light-text);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .toggle-btn {
+            font-size: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            margin-right: 15px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 280px;
+            position: fixed;
+            left: -280px;
+            top: 0;
+            background: var(--dark-blue);
+            padding-top: 70px;
+            transition: 0.3s ease;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .sidebar .menu-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-top: -50px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .container {
+            margin-left: 0;
+            margin-top: 95px;
+            width: 80%;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: margin-left 0.3s ease;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .container.shift {
+            margin-left: 300px;
+        }
+
+        /* Table styles to maintain boxes around cells */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 10px;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0; /* Keep the border for boxes */
+            background: #f9f9f9;
+            border-radius: 8px; /* Keep rounded corners for boxes */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Keep shadow for boxes */
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border: none;
+        }
+
+        td {
+            color: var(--text-color);
+        }
+
+        tr {
+            margin-bottom: 10px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .container.shift {
+                margin-left: 20px;
+            }
+
+            .header.shift {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-right .nav-link {
+                display: none;
+            }
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                border-bottom: 2px solid #e0e0e0;
+                padding-bottom: 10px;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                border: 1px solid #e0e0e0; /* Keep the border for boxes */
+                background: #f9f9f9;
+                border-radius: 8px; /* Keep rounded corners for boxes */
+                margin-bottom: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Keep shadow for boxes */
+                text-align: left;
+            }
+
+            td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--primary-color);
+                margin-right: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header" id="header">
+        <div class="header-left">
+            <button class="toggle-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-container">
+                <span class="logo-icon"><i class="fas fa-comment-medical"></i></span>
+                <span class="logo-text">I-CLIC</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="{% url 'tampilandepan' %}" class="nav-link">Beranda</a>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">I-CLIC</div>
+            <button class="close-btn" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <a href="{% url 'tampilandepan' %}" id="beranda-link" class="menu-item">
+                <i class="fas fa-home"></i> Beranda
+            </a>
+            <a href="{% url 'riwayat' %}" id="riwayat-link" class="menu-item">
+                <i class="fas fa-history"></i> Riwayat
+            </a>
+            <a href="{% url 'artikel' %}" id="artikel-link" class="menu-item">
+                <i class="fas fa-newspaper"></i> Artikel
+            </a>
+            <a href="{% url 'templatechatbot' %}" class="menu-item" id="chat-link">
+                <i class="fas fa-comments"></i> Chat Konsultasi
+            </a>
+        </div>
+    </div>
+
+    <div class="container" id="content">
+        <h2>Riwayat Prediksi Pasien</h2>
+        {% if predictions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nomor</th>
+                    <th>User ID</th>
+                    <th>Tanggal</th>
+                    <th>Hasil Prediksi</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in predictions %}
+            <tr>
+                <!-- Display only forloop.counter, removing the hyphen and row.id -->
+                <td data-label="Nomor ID">{{ forloop.counter }}</td>
+                <td data-label="User ID">{{ row.user.id }}</td>
+                <td data-label="Tanggal">{{ row.predicted_at }}</td>
+                <td data-label="Hasil Prediksi">{{ row.prediction_name }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="no-data">Belum ada riwayat prediksi.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            const header = document.getElementById('header');
+
+            sidebar.classList.toggle('active');
+            content.classList.toggle('shift');
+            header.classList.toggle('shift');
+        }
+    </script>
+</body>
+</html>

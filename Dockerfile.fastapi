@@ -1,0 +1,21 @@
+# Gunakan image Python sebagai base image
+FROM python:3.9
+
+# Set working directory
+WORKDIR /app
+
+# Salin file requirements.txt untuk FastAPI
+COPY requirements.txt /app/
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Salin file utama FastAPI (main.py)
+COPY . /app/
+
+# Expose port untuk FastAPI
+EXPOSE 8001
+
+# Perintah untuk menjalankan FastAPI dengan Uvicorn
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8001"]
+

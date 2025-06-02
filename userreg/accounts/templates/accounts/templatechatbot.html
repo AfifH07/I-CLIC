@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>I-CLIC Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #26a7de;
+      --accent-color: #ff6b9d;
+      --dark-blue: #13304a;
+      --light-blue: #e6f7ff;
+      --text-color: #333;
+      --light-text: #fff;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--dark-blue);
+      color: #fff;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      left: 0;
+      top: 0;
+      transition: transform 0.3s ease;
+      z-index: 999;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: white;
+      background-color: var(--primary-color);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-logo .logo-icon {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+
+    .sidebar-logo .logo-text {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .sidebar-menu {
+      padding: 70px 0 20px;
+      flex: 1;
+    }
+
+    .sidebar a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left-color: #fff;
+    }
+
+    .sidebar a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left-color: var(--accent-color);
+    }
+
+    .sidebar a i {
+      margin-right: 15px;
+      font-size: 1.1rem;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-left: var(--sidebar-width);
+      transition: margin-left 0.3s ease;
+      width: calc(100% - var(--sidebar-width));
+      background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .main.sidebar-hidden {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: var(--primary-color);
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      transition: margin-left 0.3s ease;
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle-btn {
+      font-size: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+      margin-right: 15px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .top-bar-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    .top-bar-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-link {
+      color: var(--light-text);
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      transition: background 0.3s;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Chat Area */
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%);
+      gap: 15px;
+    }
+
+    .chat-date {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 0.8rem;
+      color: #999;
+      position: relative;
+    }
+
+    .chat-date::before,
+    .chat-date::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 30%;
+      height: 1px;
+      background-color: #ddd;
+    }
+
+    .chat-date::before {
+      left: 0;
+    }
+
+    .chat-date::after {
+      right: 0;
+    }
+
+    .message-wrapper {
+      display: flex;
+      position: relative;
+      margin: 5px 0;
+      max-width: 85%;
+    }
+
+    .bot-wrapper {
+      align-self: flex-start;
+      animation: slideFromLeft 0.3s ease;
+    }
+
+    .user-wrapper {
+      align-self: flex-end;
+      animation: slideFromRight 0.3s ease;
+    }
+
+    @keyframes slideFromLeft {
+      from {
+        transform: translateX(-20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideFromRight {
+      from {
+        transform: translateX(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .avatar-container {
+      min-width: 45px;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 5px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .bot .avatar {
+      background-color: var(--primary-color);
+    }
+
+    .user .avatar {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .message-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 18px;
+      position: relative;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      max-width: 100%;
+    }
+
+    .bot .message-bubble {
+      background-color: #fff;
+      color: #333;
+      border-top-left-radius: 4px;
+      margin-left: 10px;
+    }
+
+    .user .message-bubble {
+      background: var(--primary-color);
+      color: white;
+      border-top-right-radius: 4px;
+      margin-right: 10px;
+      align-self: flex-end;
+    }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      font-size: 0.7rem;
+      color: #999;
+    }
+
+    .bot .message-meta {
+      margin-left: 10px;
+    }
+
+    .user .message-meta {
+      margin-right: 10px;
+      justify-content: flex-end;
+    }
+
+    .timestamp {
+      display: flex;
+      align-items: center;
+    }
+
+    .timestamp i {
+      font-size: 0.7rem;
+      margin-right: 3px;
+    }
+
+    /* Input Box */
+    .input-area {
+      padding: 15px 20px;
+      background-color: #fff;
+      border-top: 1px solid #eaeaea;
+      position: relative;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: center;
+      background-color: #f5f7fa;
+      border-radius: 24px;
+      padding: 5px 5px 5px 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.3s;
+    }
+
+    .input-box:focus-within {
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-box input {
+      flex: 1;
+      border: none;
+      padding: 12px 5px;
+      font-size: 0.95rem;
+      background: transparent;
+      outline: none;
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    .input-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .input-action-btn {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 18px;
+      margin: 0 5px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    .input-action-btn:hover {
+      background-color: #eaeaea;
+      color: #555;
+    }
+
+    .send-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-left: 5px;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .typing-indicator {
+      display: flex;
+      padding: 10px;
+      width: 70px;
+      border-radius: 15px;
+      background-color: #f0f0f0;
+      margin-left: 10px;
+    }
+
+    .typing-indicator span {
+      height: 8px;
+      width: 8px;
+      float: left;
+      margin: 0 1px;
+      background-color: #9E9EA1;
+      display: block;
+      border-radius: 50%;
+      opacity: 0.4;
+    }
+
+    .typing-indicator span:nth-of-type(1) {
+      animation: 1s blink infinite .3333s;
+    }
+
+    .typing-indicator span:nth-of-type(2) {
+      animation: 1s blink infinite .6666s;
+    }
+
+    .typing-indicator span:nth-of-type(3) {
+      animation: 1s blink infinite .9999s;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 14px;
+      border-top: 1px solid #eaeaea;
+      background-color: #fff;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .main {
+        transition: margin-left 0.3s ease, width 0.3s ease;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-right .nav-link {
+        display: none;
+      }
+
+      .sidebar {
+        width: 100%;
+        transform: translateX(-100%);
+      }
+
+      .sidebar.hidden {
+        transform: translateX(-100%);
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .message-wrapper {
+        max-width: 95%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon"><i class="fas fa-comment-medical"></i></span>
+        <span class="logo-text">I-CLIC</span>
+      </div>
+      <div class="sidebar-menu">
+        <a href="{% url 'tampilandepan' %}" id="beranda-link">
+          <i class="fas fa-home"></i> Beranda
+        </a>
+        <a href="{% url 'riwayat' %}" id="riwayat-link">
+          <i class="fas fa-history"></i> Riwayat
+        </a>
+        <a href="{% url 'artikel' %}" id="artikel-link">
+          <i class="fas fa-newspaper"></i> Artikel
+        </a>
+        <a href="{% url 'templatechatbot' %}" class="active" id="chat-link">
+          <i class="fas fa-comments"></i> Chat Konsultasi
+        <a href="{% url 'logout' %}">Logout</a>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main" id="main-content">
+      <div class="top-bar" id="top-bar">
+        <div class="top-bar-left">
+          <button class="toggle-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="top-bar-title">Chat Konsultasi</div>
+        </div>
+        <div class="header-right">
+          <a href="#" class="nav-link">Beranda</a>
+        </div>
+      </div>
+
+      <div class="chat-box" id="chat-box">
+        <div class="chat-date">Today</div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-box">
+          <input type="text" id="user-input" placeholder="Ketik pesan anda..." />
+          <div class="input-actions">
+            <button class="input-action-btn">
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <button class="input-action-btn">
+              <i class="fas fa-microphone"></i>
+            </button>
+            <button class="send-btn" onclick="sendMessage()">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>&copy; 2025 I-CLIC Health Assistant. Semua hak cipta dilindungi.</p>
+      </div>
+    </div>
+  </div>
+ <!-- JavaScript -->
+    <input type="hidden" id="logged-in-email" value="{{ user_email }}">
+  <script>
+    const loggedInUserEmail = "{{ user_email }}"; // Email dari user login
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("main-content");
+
+      sidebar.classList.toggle("hidden");
+      mainContent.classList.toggle("sidebar-hidden");
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage(message, "user");
+      showTypingIndicator();
+
+      try {
+        const response = await fetch('http://localhost:8001/chat/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            user_email: loggedInUserEmail,
+            message: message
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        hideTypingIndicator();
+        addMessage(data.bot_response, "bot");
+
+      } catch (error) {
+        console.error('Error:', error);
+        hideTypingIndicator();
+        addMessage("Maaf, terjadi kesalahan saat menghubungi server.", "bot");
+      }
+
+      input.value = "";
+    }
+
+    function showTypingIndicator() {
+      const chatBox = document.getElementById("chat-box");
+
+      const typingWrapper = document.createElement("div");
+      typingWrapper.className = "message-wrapper bot-wrapper bot";
+      typingWrapper.id = "typing-indicator-wrapper";
+
+      const avatarContainer = document.createElement("div");
+      avatarContainer.className = "avatar-container";
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.innerHTML = '<i class="fas fa-comment-medical" style="color: white;"></i>';
+      avatarContainer.appendChild(avatar);
+
+      const messageContent = document.createElement("div");
+      messageContent.className = "message-content";
+
+      const typingIndicator = document.createElement("div");
+      typingIndicator.className = "typing-indicator";
+      typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+
+      messageContent.appendChild(typingIndicator);
+      typingWrapper.appendChild(avatarContainer);
+      typingWrapper.appendChild(messageContent);
+
+      chatBox.appendChild(typingWrapper);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+      const typingWrapper = document.getElementById("typing-indicator-wrapper");
+      if (typingWrapper) {
+        typingWrapper.remove();
+      }
+    }
+
+    function addMessage(text, sender) {
+      const chatBox = document.getElementById("chat-box");
+
+      const wrapper = document.createElement("div");
+      wrapper.className = `message-wrapper ${sender}-wrapper ${sender}`;
+
+      const avatarContainer = document.createElement("div");
+      avatarContainer.className = "avatar-container";
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+
+      if (sender === "bot") {
+        avatar.innerHTML = '<i class="fas fa-comment-medical" style="color: white;"></i>';
+      } else {
+        avatar.innerHTML = '<i class="fas fa-user" style="color: white;"></i>';
+      }
+
+      avatarContainer.appendChild(avatar);
+
+      const messageContent = document.createElement("div");
+      messageContent.className = "message-content";
+
+      const messageBubble = document.createElement("div");
+      messageBubble.className = "message-bubble";
+      const formattedText = text.replace(/\n/g, '<br>');
+      messageBubble.innerHTML = formattedText;
+
+      const messageMeta = document.createElement("div");
+      messageMeta.className = "message-meta";
+      const timestamp = document.createElement("div");
+      timestamp.className = "timestamp";
+      timestamp.innerHTML = `<i class="far fa-clock"></i> ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+      messageMeta.appendChild(timestamp);
+      messageContent.appendChild(messageBubble);
+      messageContent.appendChild(messageMeta);
+
+      if (sender === "bot") {
+        wrapper.appendChild(avatarContainer);
+        wrapper.appendChild(messageContent);
+      } else {
+        wrapper.appendChild(messageContent);
+        wrapper.appendChild(avatarContainer);
+      }
+
+      chatBox.appendChild(wrapper);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Handle menu navigation
+    document.getElementById("beranda-link").addEventListener("click", function (e) {
+      e.preventDefault();
+      updateActiveMenu(this);
+      window.location.href = "{% url 'tampilandepan' %}";
+    });
+
+    document.getElementById("riwayat-link").addEventListener("click", function (e) {
+      e.preventDefault();
+      updateActiveMenu(this);
+      window.location.href = "{% url 'riwayat' %}";
+    });
+
+    document.getElementById("artikel-link").addEventListener("click", function (e) {
+      e.preventDefault();
+      updateActiveMenu(this);
+      window.location.href = "{% url 'artikel' %}";
+    });
+
+    document.getElementById("chat-link").addEventListener("click", function (e) {
+      e.preventDefault();
+      updateActiveMenu(this);
+      window.location.href = "{% url 'templatechatbot' %}";
+    });
+
+    function updateActiveMenu(element) {
+      const menuItems = document.querySelectorAll(".sidebar-menu a");
+      menuItems.forEach(item => item.classList.remove("active"));
+      element.classList.add("active");
+    }
+
+    window.onload = function () {
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("main-content");
+      sidebar.classList.remove("hidden");
+      mainContent.classList.remove("sidebar-hidden");
+
+      setTimeout(() => {
+        addMessage("Halo, apa keluhan anda hari ini?", "bot");
+      }, 500);
+
+      document.getElementById("user-input").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+    };
+  </script>
+</body>
+
+</html>

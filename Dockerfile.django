@@ -1,0 +1,26 @@
+# Dockerfile.django
+FROM python:3.9
+
+RUN apt-get update && apt-get install -y netcat-openbsd
+
+# Set working directory
+WORKDIR /app
+
+# Salin file requirements.txt dan install dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Salin seluruh proyek ke dalam container, termasuk userreg
+COPY . /app/
+
+# Salin skrip entrypoint.sh ke dalam container
+COPY entrypoint.sh /app/
+
+# Berikan izin eksekusi pada skrip entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Tentukan entrypoint untuk menjalankan skrip
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Expose port untuk Django
+EXPOSE 8000
